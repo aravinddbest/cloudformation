@@ -1,0 +1,58 @@
+
+AWSTemplateFormatVersion: 2010-09-09
+Description: AZ parameter
+
+Parameters: 
+  KeyList:
+    Description: Select The Key Name
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: cfn-key-1
+    AllowedValues:
+      - cfn-key-1
+      - cfn-key-2
+
+  
+  AvailabilityZone:
+    Description: Select The AvailabilityZone
+    Type: String
+    Default:  us-east-2a
+    AllowedValues:
+      - us-east-2a
+      - us-east-2b
+      - us-east-2c
+    
+  MyInstanceType:
+    Description: Please Select a specific Instance Type form SSM
+    Type: AWS::SSM::Parameter::Value<String>
+    
+
+
+Resources:
+  Ec2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0fb653ca2d3203ac1  
+      InstanceType: !Ref MyInstanceType  
+      KeyName:  !Ref KeyList
+      SecurityGroups:
+        - default
+        - !Ref  SSHSecurityGroup
+      AvailabilityZone:  !Ref  AvailabilityZone
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Port SSH allowed
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22' 
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '8080'
+          ToPort: '8080' 
+          CidrIp: 0.0.0.0/0
+
+          
+          
+
+
